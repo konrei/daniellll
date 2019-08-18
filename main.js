@@ -9,21 +9,20 @@ getimage().catch(error => {
     console.error(error);
 });
 
-async function getimages() {
-    var images = [];
-    var urls = ["./image1.jpg", "./image2.jpg", "./image3.jpg"];
+const urls = ["./image1.jpg", "./image2.jpg", "./image3.jpg"];
 
-    const response2 = await fetch(urls[0]);
-    const blob2 = await response2.blob();
-    
-    var newImage = document.createElement("img");
-    newImage.setAttribute("id", "newImage");
-    document.querySelector(".multiple-images").appendChild(newImage);
-    
-    document.getElementById("newImage").src = URL.createObjectURL(blob2);
+async function getimages(urls) {
+    for (let url of urls) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        document.querySelector(".multiple-images").appendChild(img);
+    }
 }
 
-getimages();
+getimages(urls);
+
 /*fetch("./image.jpg").then(response => {
     console.log(response);
     return response.blob();
