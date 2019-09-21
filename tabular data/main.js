@@ -1,5 +1,3 @@
-getData();
-
 async function getData() {
     const response = await fetch("./ZonAnn.Ts+dSST.csv");
     const data = await response.text();
@@ -9,52 +7,45 @@ async function getData() {
         const columns = row.split(",");
         const year = columns[0];
         const temp = columns[1];
+
+        xYears.push(year);
+        yTemps.push(parseFloat(temp) + 14);
     });
+
 }
 
-var ctx = document.getElementById('chart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
+const xYears = [];
+const yTemps = [];
+
+getTable();
+
+async function getTable() {
+    await getData();
+    const ctx = document.getElementById('chart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xYears,
+            datasets: [{
+                label: 'Combined Land-Surface Air and Sea-Surface Water Temperature in C°',
+                data: yTemps,
+                fill: false,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
             }]
+        },
+        options: {
+            responsive: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        callback: function (value, index, values) {
+                            return value + "°";
+                        }
+                    }
+                }]
+            }
         }
-    }
-});
-/*getGDP();
-
-async function getGDP() {
-    const response = await fetch("./API_NY.GDP.MKTP.CD_DS2_en_csv_v2_103640.csv");
-    const data = await response.text();
-
-    const table = data.split("\n").slice(247);
-    console.log(table);
-}*/
+    });
+}
